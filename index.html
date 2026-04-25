@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Для моей самой любимой ❤️</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #050510; font-family: 'Arial', sans-serif; }
+        #start-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 22px 45px; font-size: 22px; background: linear-gradient(45deg, #ff4d6d, #ff758c); color: white; border: none; border-radius: 50px; cursor: pointer; z-index: 100; box-shadow: 0 0 25px rgba(255, 77, 109, 0.6); font-weight: bold; }
+        .album { position: absolute; top: 45%; left: 50%; width: 85vw; height: 115vw; max-width: 360px; max-height: 500px; transform: translate(-50%, -50%); perspective: 1200px; display: none; z-index: 10; }
+        .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95); }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border: 10px solid white; border-bottom: 80px solid white; border-radius: 5px; background: white; }
+        .face img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-text { position: absolute; bottom: -70px; left: 0; width: 100%; text-align: center; color: #ff4d6d; font-size: 14px; font-weight: bold; padding: 0 5px; box-sizing: border-box; line-height: 1.2; font-style: italic; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        .back { transform: rotateY(180deg); }
+        #final-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.98); padding: 30px; border-radius: 25px; text-align: center; display: none; z-index: 50; width: 85%; max-width: 420px; box-shadow: 0 0 50px rgba(255, 77, 109, 0.8); max-height: 80vh; overflow-y: auto; }
+        #final-screen h1 { color: #ff4d6d; font-size: 24px; margin-bottom: 15px; }
+        #final-screen p { color: #333; line-height: 1.6; font-size: 17px; white-space: pre-line; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 5; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <button id="start-btn">Нажми сюда ❤️</button>
+    
+    <audio id="music1" loop><source src="music.mp3" type="audio/mp3"></audio>
+    <audio id="music2"><source src="music2.mp3" type="audio/mp3"></audio>
+
+    <div class="album" id="album">
+        <div class="card" id="card">
+            <div class="face front">
+                <img src="./1.JPG" id="imgFront">
+                <div class="photo-text" id="txtFront"></div>
+            </div>
+            <div class="face back">
+                <img src="./2.JPG" id="imgBack">
+                <div class="photo-text" id="txtBack"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="final-screen">
+        <h1>Для моей самой любимой ❤️</h1>
+        <p id="final-text"></p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const music1 = document.getElementById('music1');
+        const music2 = document.getElementById('music2');
+        const btn = document.getElementById('start-btn');
+        const album = document.getElementById('album');
+        const card = document.getElementById('card');
+        const finalScreen = document.getElementById('final-screen');
+
+        // ВАЖНО: Проверь расширение .JPG или .jpg в репозитории!
+        let photoData = [
+            { src: "./1.JPG", text: "одна из первых фото в отношениях уже на танцах)" },
+            { src: "./2.JPG", text: "с любимой прощаемся в подьезде ❤️" },
+            { src: "./3.JPG", text: "обожаю быть рядом со своей кошечкой💓" },
+            { src: "./4.JPG", text: "впервые в зале с любимой(очень рад)🥺" },
+            { src: "./5.JPG", text: "с любимой на отчетнике💋" },
+            { src: "./6.JPG", text: "любимая с кошечкой и я рядом)" },
+            { src: "./7.JPG", text: "семейная фотка хихи❤️" },
+            { src: "./8.JPG", text: "тут мы выступаем вместе🤭" },
+            { src: "./9.JPG", text: "тут опять прощаемся мило)" },
+            { src: "./10.JPG", text: "тут мы украшали комнату тебе🥺" },
+            { src: "./11.JPG", text: "тут в париже🥺" },
+            { src: "./12.JPG", text: "тут бью тебя😝" },
+            { src: "./13.JPG", text: "опять в париже что-ли🙈" },
+            { src: "./14.JPG", text: "тут только начиналось🤫" },
+            { src: "./15.JPG", text: "здесь уже гулять начинали😸" }
+        ];
+
+        let finalSpeech = "милая, сколько бы мы ни ссорились, сколько бы раз мы ни обижались друг на друга из-за мелочей, я всё равно буду любить тебя всю свою жизнь. \n\nЯ выбрал тебя и хочу быть только с тобой. Всё, что я делаю для тебя, я не делал ни для кого. Ты самая прекрасная девочка, ты лучик солнышка в моём сером мире. Ты просто чудо!\n\nЗнай, что я тебя очень сильно люблю💕 и буду любить до конца своей жизни🥺";
+
+        let rotation = 0;
+        let isFrontSide = true;
+        let particles = [];
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        btn.onclick = () => {
+            btn.style.display = 'none';
+            album.style.display = 'block';
+            music1.play(); 
+            document.getElementById('txtFront').innerText = photoData[0].text;
+            document.getElementById('txtBack').innerText = photoData[1].text;
+            startFlipping();
+            animate();
+        };
+
+        function switchMusic() {
+            let volume = 1.0;
+            let fadeOut = setInterval(() => {
+                if (volume > 0.1) { volume -= 0.1; music1.volume = volume; } 
+                else { clearInterval(fadeOut); music1.pause(); music2.play(); }
+            }, 100);
+        }
+
+        function startFlipping() {
+            let totalFlips = 14; 
+            let count = 0;
+            let timer = setInterval(() => {
+                count++;
+                rotation += 180;
+                card.style.transform = `rotateY(${rotation}deg)`;
+                isFrontSide = !isFrontSide;
+
+                if (count >= totalFlips) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        album.style.display = 'none';
+                        document.getElementById('final-text').innerText = finalSpeech;
+                        finalScreen.style.display = 'block';
+                        switchMusic(); 
+                        setInterval(spawnBurst, 1500);
+                    }, 3500);
+                    return;
+                }
+
+                setTimeout(() => {
+                    let nextIdx = count + 1; 
+                    if (nextIdx < photoData.length) {
+                        const targetImg = isFrontSide ? 'imgBack' : 'imgFront';
+                        const targetTxt = isFrontSide ? 'txtBack' : 'txtFront';
+                        document.getElementById(targetImg).src = photoData[nextIdx].src;
+                        document.getElementById(targetTxt).innerText = photoData[nextIdx].text;
+                    }
+                }, 1000); 
+            }, 4500);
+        }
+
+        class Heart {
+            constructor(x, y, isBurst) {
+                this.x = x; this.y = y;
+                this.size = isBurst ? Math.random() * 25 + 18 : Math.random() * 18 + 12;
+                this.speedX = (Math.random() - 0.5) * (isBurst ? 20 : 3);
+                this.speedY = isBurst ? (Math.random() - 0.5) * 20 : -Math.random() * 3 - 2;
+                this.alpha = 1;
+            }
+            draw() { ctx.globalAlpha = this.alpha; ctx.font = `${this.size}px Arial`; ctx.fillText("❤️", this.x, this.y); }
+            update() { this.x += this.speedX; this.y += this.speedY; this.alpha -= 0.007; }
+        }
+
+        function spawnBurst() { for (let i = 0; i < 40; i++) particles.push(new Heart(canvas.width / 2, canvas.height / 2, true)); }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (Math.random() < 0.18) particles.push(new Heart(Math.random() * canvas.width, canvas.height + 20, false));
+            particles.forEach((p, i) => { p.update(); p.draw(); if (p.alpha <= 0) particles.splice(i, 1); });
+            requestAnimationFrame(animate);
+        }
+        window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    </script>
+</body>
+</html>
