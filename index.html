@@ -29,11 +29,11 @@
     <div class="album" id="album">
         <div class="card" id="card">
             <div class="face front">
-                <img src="./1.JPG" id="imgFront">
+                <img src="1.jpg" id="imgFront">
                 <div class="photo-text" id="txtFront"></div>
             </div>
             <div class="face back">
-                <img src="./2.JPG" id="imgBack">
+                <img src="2.jpg" id="imgBack">
                 <div class="photo-text" id="txtBack"></div>
             </div>
         </div>
@@ -56,23 +56,22 @@
         const card = document.getElementById('card');
         const finalScreen = document.getElementById('final-screen');
 
-        // ВАЖНО: Проверь расширение .JPG или .jpg в репозитории!
         let photoData = [
-            { src: "./1.JPG", text: "одна из первых фото в отношениях уже на танцах)" },
-            { src: "./2.JPG", text: "с любимой прощаемся в подьезде ❤️" },
-            { src: "./3.JPG", text: "обожаю быть рядом со своей кошечкой💓" },
-            { src: "./4.JPG", text: "впервые в зале с любимой(очень рад)🥺" },
-            { src: "./5.JPG", text: "с любимой на отчетнике💋" },
-            { src: "./6.JPG", text: "любимая с кошечкой и я рядом)" },
-            { src: "./7.JPG", text: "семейная фотка хихи❤️" },
-            { src: "./8.JPG", text: "тут мы выступаем вместе🤭" },
-            { src: "./9.JPG", text: "тут опять прощаемся мило)" },
-            { src: "./10.JPG", text: "тут мы украшали комнату тебе🥺" },
-            { src: "./11.JPG", text: "тут в париже🥺" },
-            { src: "./12.JPG", text: "тут бью тебя😝" },
-            { src: "./13.JPG", text: "опять в париже что-ли🙈" },
-            { src: "./14.JPG", text: "тут только начиналось🤫" },
-            { src: "./15.JPG", text: "здесь уже гулять начинали😸" }
+            { src: "1.jpg", text: "одна из первых фото в отношениях уже на танцах)" },
+            { src: "2.jpg", text: "с любимой прощаемся в подьезде ❤️" },
+            { src: "3.jpg", text: "обожаю быть рядом со своей кошечкой💓" },
+            { src: "4.jpg", text: "впервые в зале с любимой(очень рад)🥺" },
+            { src: "5.jpg", text: "с любимой на отчетнике💋" },
+            { src: "6.jpg", text: "любимая с кошечкой и я рядом)" },
+            { src: "7.jpg", text: "семейная фотка хихи❤️" },
+            { src: "8.jpg", text: "тут мы выступаем вместе🤭" },
+            { src: "9.jpg", text: "тут опять прощаемся мило)" },
+            { src: "10.jpg", text: "тут мы украшали комнату тебе🥺" },
+            { src: "11.jpg", text: "тут в париже🥺" },
+            { src: "12.jpg", text: "тут бью тебя😝" },
+            { src: "13.jpg", text: "опять в париже что-ли🙈" },
+            { src: "14.jpg", text: "тут только начиналось🤫" },
+            { src: "15.jpg", text: "здесь уже гулять начинали😸" }
         ];
 
         let finalSpeech = "милая, сколько бы мы ни ссорились, сколько бы раз мы ни обижались друг на друга из-за мелочей, я всё равно буду любить тебя всю свою жизнь. \n\nЯ выбрал тебя и хочу быть только с тобой. Всё, что я делаю для тебя, я не делал ни для кого. Ты самая прекрасная девочка, ты лучик солнышка в моём сером мире. Ты просто чудо!\n\nЗнай, что я тебя очень сильно люблю💕 и буду любить до конца своей жизни🥺";
@@ -86,7 +85,7 @@
         btn.onclick = () => {
             btn.style.display = 'none';
             album.style.display = 'block';
-            music1.play(); 
+            music1.play().catch(e => console.log("Music error:", e)); 
             document.getElementById('txtFront').innerText = photoData[0].text;
             document.getElementById('txtBack').innerText = photoData[1].text;
             startFlipping();
@@ -97,7 +96,7 @@
             let volume = 1.0;
             let fadeOut = setInterval(() => {
                 if (volume > 0.1) { volume -= 0.1; music1.volume = volume; } 
-                else { clearInterval(fadeOut); music1.pause(); music2.play(); }
+                else { clearInterval(fadeOut); music1.pause(); music2.play().catch(e => console.log("Music 2 error:", e)); }
             }, 100);
         }
 
